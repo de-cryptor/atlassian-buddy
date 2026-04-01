@@ -1,7 +1,7 @@
-# spike-mcp
+# atlassian-buddy
 
-[![PyPI](https://img.shields.io/pypi/v/spike-mcp)](https://pypi.org/project/spike-mcp/)
-[![Python](https://img.shields.io/pypi/pyversions/spike-mcp)](https://pypi.org/project/spike-mcp/)
+[![PyPI](https://img.shields.io/pypi/v/atlassian-buddy)](https://pypi.org/project/atlassian-buddy/)
+[![Python](https://img.shields.io/pypi/pyversions/atlassian-buddy)](https://pypi.org/project/atlassian-buddy/)
 
 MCP server that connects Claude to Jira and Confluence. Engineers can research spikes, generate technical solutions with Mermaid architecture diagrams, write Confluence docs, and create Jira epic + story breakdowns through natural conversation — no Anthropic API key required.
 
@@ -20,9 +20,9 @@ MCP server that connects Claude to Jira and Confluence. Engineers can research s
 ## Installation
 
 ```bash
-pip install spike-mcp
+pip install atlassian-buddy
 # or
-uv add spike-mcp
+uv add atlassian-buddy
 ```
 
 ---
@@ -62,7 +62,7 @@ epic_link_field    = "customfield_10014"
 story_point_scale = [1, 2, 3, 5, 8, 13]
 ```
 
-> **Tip:** Config is also discovered automatically in your project root or any parent directory up to the git root — useful when running spike-mcp from a specific repo. The search order is: current directory → git root walk-up → `~/.spike.toml`.
+> **Tip:** Config is also discovered automatically in your project root or any parent directory up to the git root — useful when running atlassian-buddy from a specific repo. The search order is: current directory → git root walk-up → `~/.spike.toml`.
 
 #### Org-specific required fields
 
@@ -94,7 +94,7 @@ Never put the token in `.spike.toml` — it is read exclusively from the environ
 
 ## Connect to Claude
 
-spike-mcp works with both **Claude Desktop** (GUI app) and **Claude Code** (CLI). Follow the guide for whichever you use — or both.
+atlassian-buddy works with both **Claude Desktop** (GUI app) and **Claude Code** (CLI). Follow the guide for whichever you use — or both.
 
 ---
 
@@ -107,13 +107,13 @@ spike-mcp works with both **Claude Desktop** (GUI app) and **Claude Code** (CLI)
 | macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
 
-**Step 2 — Add spike-mcp to `mcpServers`**
+**Step 2 — Add atlassian-buddy to `mcpServers`**
 
 ```json
 {
   "mcpServers": {
-    "spike-mcp": {
-      "command": "spike-mcp",
+    "atlassian-buddy": {
+      "command": "atlassian-buddy",
       "env": {
         "ATLASSIAN_API_TOKEN": "your-token-here"
       }
@@ -122,11 +122,11 @@ spike-mcp works with both **Claude Desktop** (GUI app) and **Claude Code** (CLI)
 }
 ```
 
-> **macOS/Homebrew tip:** If `spike-mcp` is not on your PATH, use the full binary path:
+> **macOS/Homebrew tip:** If `atlassian-buddy` is not on your PATH, use the full binary path:
 > ```json
-> "command": "/opt/homebrew/bin/spike-mcp"
+> "command": "/opt/homebrew/bin/atlassian-buddy"
 > ```
-> Run `which spike-mcp` in your terminal to find the path.
+> Run `which atlassian-buddy` in your terminal to find the path.
 
 **Step 3 — Restart Claude Desktop**
 
@@ -136,17 +136,17 @@ Quit and reopen the app. A hammer icon (🔨) in the toolbar confirms the tools 
 
 ### Option B — Claude Code (CLI)
 
-**Step 1 — Add spike-mcp globally**
+**Step 1 — Add atlassian-buddy globally**
 
 Run this once so the server is available in every project:
 
 ```bash
-claude mcp add spike-mcp spike-mcp -s user -e ATLASSIAN_API_TOKEN="your-token-here"
+claude mcp add atlassian-buddy atlassian-buddy -s user -e ATLASSIAN_API_TOKEN="your-token-here"
 ```
 
-> **macOS/Homebrew tip:** Use the full path if `spike-mcp` is not on your PATH:
+> **macOS/Homebrew tip:** Use the full path if `atlassian-buddy` is not on your PATH:
 > ```bash
-> claude mcp add spike-mcp /opt/homebrew/bin/spike-mcp -s user -e ATLASSIAN_API_TOKEN="your-token-here"
+> claude mcp add atlassian-buddy /opt/homebrew/bin/atlassian-buddy -s user -e ATLASSIAN_API_TOKEN="your-token-here"
 > ```
 
 **Step 2 — Verify the connection**
@@ -158,12 +158,12 @@ claude mcp list
 You should see:
 
 ```
-spike-mcp: /opt/homebrew/bin/spike-mcp  - ✓ Connected
+atlassian-buddy: /opt/homebrew/bin/atlassian-buddy  - ✓ Connected
 ```
 
 **Step 3 — Start a new Claude Code session**
 
-MCP servers are loaded at session start. Open a fresh session in any directory and spike-mcp tools will be available automatically.
+MCP servers are loaded at session start. Open a fresh session in any directory and atlassian-buddy tools will be available automatically.
 
 ---
 
@@ -172,7 +172,7 @@ MCP servers are loaded at session start. Open a fresh session in any directory a
 Start a spike session by invoking the workflow prompt at the top of your conversation:
 
 ```
-/mcp__spike-mcp__spike_workflow
+/mcp__atlassian-buddy__spike_workflow
 ```
 
 Then talk naturally:
@@ -225,8 +225,8 @@ All fields in `.spike.toml`:
 ## Contributing
 
 ```bash
-git clone https://github.com/de-cryptor/spike-mcp
-cd spike-mcp
+git clone https://github.com/de-cryptor/atlassian-buddy
+cd atlassian-buddy
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 pytest
