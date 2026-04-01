@@ -191,6 +191,7 @@ Then talk naturally:
 | `search_confluence` | `query`, `space_key?`, `limit?` | CQL full-text search across Confluence |
 | `get_confluence_page` | `page_id` | Fetch full page content by ID |
 | `search_jira` | `query`, `project_key?`, `limit?` | JQL full-text search across Jira |
+| `get_jira_issue` | `issue_key_or_url` | Fetch a Jira issue by key (`PLAT-123`) or full URL |
 | `write_confluence_doc` | `title`, `body_markdown`, `space_key?`, `parent_page_id?` | Create a Confluence page (markdown + Mermaid → storage format) |
 | `create_epic` | `summary`, `description`, `project_key?`, `label?` | Create a Jira Epic |
 | `create_story` | `epic_key`, `summary`, `description`, `acceptance_criteria`, `story_points?`, `project_key?`, `label?` | Create a Jira Story linked to an Epic |

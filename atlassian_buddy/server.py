@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 
 import httpx
 from mcp.server.fastmcp import FastMCP
@@ -45,6 +46,42 @@ def create_server(config: AtlassianBuddyConfig) -> FastMCP:
         try:
             results = await jira.search_issues(query, project_key=project_key, limit=limit)
             return json.dumps(results, indent=2)
+        except httpx.HTTPStatusError as e:
+            return f"Jira API error {e.response.status_code}: {e.response.text[:300]}"
+
+    @mcp_server.tool()
+    async def get_jira_issue(issue_key_or_url: str) -> str:
+        """Get a Jira issue by key (e.g. PLAT-123) or full URL (e.g. https://org.atlassian.net/browse/PLAT-123)."""
+        match = re.search(r'([A-Z][A-Z0-9_]+-\d+)', issue_key_or_url)
+        if not match:
+            return f"Could not extract a Jira issue key from: {issue_key_or_url}"
+        key = match.group(1)
+        try:
+            data = await jira.get_issue(key)
+            fields = data.get("fields", {})
+            description = fields.get("description") or {}
+            desc_text = ""
+            if isinstance(description, dict):
+                for block in description.get("content", []):
+                    for node in block.get("content", []):
+                        if node.get("type") == "text":
+                            desc_text += node.get("text", "")
+                    desc_text += "\n"
+            assignee = fields.get("assignee") or {}
+            reporter = fields.get("reporter") or {}
+            return json.dumps({
+                "key": data["key"],
+                "url": f"{config.atlassian.base_url}/browse/{data['key']}",
+                "summary": fields.get("summary", ""),
+                "type": (fields.get("issuetype") or {}).get("name", ""),
+                "status": (fields.get("status") or {}).get("name", ""),
+                "priority": (fields.get("priority") or {}).get("name", ""),
+                "assignee": assignee.get("displayName", "Unassigned"),
+                "reporter": reporter.get("displayName", ""),
+                "labels": fields.get("labels", []),
+                "story_points": fields.get(config.jira.story_points_field),
+                "description": desc_text.strip(),
+            }, indent=2)
         except httpx.HTTPStatusError as e:
             return f"Jira API error {e.response.status_code}: {e.response.text[:300]}"
 

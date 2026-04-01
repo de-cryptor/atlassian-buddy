@@ -36,6 +36,7 @@ def test_all_tools_registered(buddy_config):
         "search_confluence",
         "get_confluence_page",
         "search_jira",
+        "get_jira_issue",
         "write_confluence_doc",
         "create_epic",
         "create_story",
@@ -128,6 +129,70 @@ async def test_search_jira_returns_results(buddy_config):
     result = await _get_tool(server, "search_jira")(query="queue")
     data = json.loads(result)
     assert data[0]["key"] == "PLAT-1"
+
+
+# ── get_jira_issue ─────────────────────────────────────────────────────────────
+
+@respx.mock
+async def test_get_jira_issue_by_key(buddy_config):
+    respx.get(f"{BASE}/rest/api/3/issue/PLAT-42").mock(
+        return_value=httpx.Response(200, json={
+            "key": "PLAT-42",
+            "fields": {
+                "summary": "Migrate job queue to Temporal",
+                "issuetype": {"name": "Story"},
+                "status": {"name": "In Progress"},
+                "priority": {"name": "High"},
+                "assignee": {"displayName": "Jane Doe"},
+                "reporter": {"displayName": "John Smith"},
+                "labels": ["platform"],
+                "customfield_10016": 5,
+                "description": {
+                    "content": [{"content": [{"type": "text", "text": "Some description"}]}]
+                },
+            },
+        })
+    )
+    server = create_server(buddy_config)
+    result = await _get_tool(server, "get_jira_issue")(issue_key_or_url="PLAT-42")
+    data = json.loads(result)
+    assert data["key"] == "PLAT-42"
+    assert data["summary"] == "Migrate job queue to Temporal"
+    assert data["status"] == "In Progress"
+    assert data["assignee"] == "Jane Doe"
+
+
+@respx.mock
+async def test_get_jira_issue_by_url(buddy_config):
+    respx.get(f"{BASE}/rest/api/3/issue/PLAT-42").mock(
+        return_value=httpx.Response(200, json={
+            "key": "PLAT-42",
+            "fields": {
+                "summary": "Migrate job queue",
+                "issuetype": {"name": "Story"},
+                "status": {"name": "Open"},
+                "priority": None,
+                "assignee": None,
+                "reporter": {"displayName": "Jane"},
+                "labels": [],
+                "customfield_10016": None,
+                "description": None,
+            },
+        })
+    )
+    server = create_server(buddy_config)
+    result = await _get_tool(server, "get_jira_issue")(
+        issue_key_or_url="https://test.atlassian.net/browse/PLAT-42"
+    )
+    data = json.loads(result)
+    assert data["key"] == "PLAT-42"
+    assert data["assignee"] == "Unassigned"
+
+
+async def test_get_jira_issue_invalid_input(buddy_config):
+    server = create_server(buddy_config)
+    result = await _get_tool(server, "get_jira_issue")(issue_key_or_url="not-a-ticket")
+    assert "Could not extract" in result
 
 
 # ── write_confluence_doc ────────────────────────────────────────────────────────────

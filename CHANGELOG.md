@@ -5,6 +5,11 @@ Bump `version` in `pyproject.toml`, add an entry here, then `git tag vX.Y.Z` to 
 
 ## [Unreleased]
 
+## [0.1.3] — 2026-04-02
+
+### Added
+- `get_jira_issue` tool — fetch a Jira issue by key (`PLAT-123`) or full URL; returns summary, status, type, priority, assignee, description, labels, and story points
+
 ## [0.1.2] — 2026-04-02
 
 ### Changed
