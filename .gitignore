@@ -1,0 +1,14 @@
+.worktrees/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+.env
+
+# Atlassian project config — contains org-specific values, never commit
+.spike.toml
+# But do commit the example:
+!.spike.toml.example
