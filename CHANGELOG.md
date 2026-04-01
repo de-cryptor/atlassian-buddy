@@ -5,6 +5,14 @@ Bump `version` in `pyproject.toml`, add an entry here, then `git tag vX.Y.Z` to 
 
 ## [Unreleased]
 
+## [0.1.5] — 2026-04-02
+
+### Changed
+- Removed Mermaid and PlantUML diagram support; all diagrams use plain `text` code blocks (always renders, no Confluence app required)
+- Jira ticket descriptions now use Jira wiki markup (`h2.`, `#` numbered lists) for proper heading and list rendering
+- `mermaid_macro` config field removed from `ConfluenceConfig`
+- Updated workflow prompt to include `get_jira_issue` and `update_confluence_doc` tools
+
 ## [0.1.4] — 2026-04-02
 
 ### Fixed

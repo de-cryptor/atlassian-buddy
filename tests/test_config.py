@@ -126,27 +126,3 @@ def test_load_config_custom_story_point_scale(tmp_path: Path, monkeypatch: pytes
     assert result.tickets.story_point_scale == [1, 2, 3, 5, 8]
 
 
-def test_load_config_mermaid_macro_default(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    cfg = tmp_path / ".atlassian_buddy.toml"
-    cfg.write_text(MINIMAL_TOML)
-    monkeypatch.setenv("ATLASSIAN_API_TOKEN", "tok")
-    result = load_config(str(cfg))
-    assert result.confluence.mermaid_macro == "mermaid"
-
-
-def test_load_config_mermaid_macro_custom(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
-    toml = """
-[atlassian]
-base_url = "https://myorg.atlassian.net"
-email = "user@example.com"
-
-[confluence]
-space_key = "ENG"
-parent_page_id = "111"
-mermaid_macro = "code"
-"""
-    cfg = tmp_path / ".atlassian_buddy.toml"
-    cfg.write_text(toml)
-    monkeypatch.setenv("ATLASSIAN_API_TOKEN", "tok")
-    result = load_config(str(cfg))
-    assert result.confluence.mermaid_macro == "code"

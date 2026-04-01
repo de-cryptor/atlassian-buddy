@@ -52,33 +52,12 @@ def test_md_to_storage_code_block():
     assert "<![CDATA[" in result
 
 
-def test_md_to_storage_mermaid_block():
-    md = "```mermaid\ngraph TD\n    A --> B\n```"
+def test_md_to_storage_fenced_block_rendered_as_code():
+    md = "```text\nA --> B --> C\n```"
     result = _md_to_storage(md)
-    assert 'ac:name="mermaid"' in result
-    assert "graph TD" in result
-    assert "<![CDATA[" in result
-    assert 'ac:name="code"' not in result
-    # Mermaid macro must NOT have a language parameter — causes rendering failure
-    assert 'ac:name="language"' not in result
-
-
-def test_md_to_storage_mermaid_custom_macro():
-    md = "```mermaid\ngraph TD\n    A --> B\n```"
-    result = _md_to_storage(md, mermaid_macro="code")
     assert 'ac:name="code"' in result
-    assert 'ac:parameter ac:name="language">mermaid' in result
-    assert "graph TD" in result
-    assert 'ac:name="mermaid"' not in result
-
-
-def test_md_to_storage_plantuml_block():
-    md = "```plantuml\n@startuml\nA -> B : request\n@enduml\n```"
-    result = _md_to_storage(md)
-    assert 'ac:name="plantuml"' in result
-    assert "@startuml" in result
+    assert "A --> B --> C" in result
     assert "<![CDATA[" in result
-    assert 'ac:name="code"' not in result
 
 
 def test_md_to_storage_table():

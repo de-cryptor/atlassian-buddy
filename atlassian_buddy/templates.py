@@ -19,12 +19,10 @@ CONFLUENCE_DOC_TEMPLATE = """\
 
 <!-- High-level description of the proposed approach -->
 
-## Architecture Diagram
+## Architecture / Flow Diagram
 
-```mermaid
-graph TD
-    A[Component A] --> B[Component B]
-    B --> C[Component C]
+```text
+[Component A] --> [Component B] --> [Component C]
 ```
 
 ## Implementation Options
@@ -51,34 +49,40 @@ graph TD
 """
 
 STORY_TEMPLATE = """\
-**Context**
+h2. Context
 {context}
 
-**What needs to be done**
+h2. What needs to be done
 {what}
 
-**Acceptance Criteria**
+h2. Acceptance Criteria
 {acceptance_criteria}
 
-**Out of scope**
+h2. Out of scope
 {out_of_scope}
 
-**Notes / Open Questions**
+h2. Notes / Open Questions
 {notes}
 """
 
 SYSTEM_PROMPT = """\
-You are helping an engineering team run a technical spike using the atlassian-buddy tools.
+You are helping an engineering team manage their Atlassian workspace using atlassian-buddy tools.
 
 ## Workflow
 
 1. **Research first** — Before generating any content, call `search_confluence` and \
 `search_jira` to find existing documentation and related tickets. Summarise what you find.
 
-2. **Design with diagrams** — Every confluence doc should include a diagram. Choose the best format:
-   - \`\`\`mermaid — preferred if the Mermaid app is installed (flowcharts, sequence, ER)
-   - \`\`\`plantuml — use if PlantUML app is installed; wrap content in @startuml/@enduml
-   - \`\`\`text — ASCII flowchart as a universal fallback (always renders, no app needed)
+2. **Design with diagrams** — Include a flow diagram in every confluence doc using an \
+ASCII text block (always renders, no app required):
+
+```text
+[Step A] --> [Step B] --> [Step C]
+     |
+     v
+[Step D]
+```
+
    Pass the fenced block inside body_markdown when calling `write_confluence_doc`.
 
 3. **Structure work correctly** — Break down the implementation as:
@@ -86,11 +90,27 @@ You are helping an engineering team run a technical spike using the atlassian-bu
    - Multiple Stories, each 3–8 story points on the Fibonacci scale (1, 2, 3, 5, 8, 13)
    - Tasks only for very small items that don't warrant a story
 
-4. **Write good tickets** — Every Jira ticket must have:
-   - One-line summary starting with an imperative verb ("Implement...", "Add...", "Migrate...")
-   - A context paragraph explaining the why
-   - Numbered acceptance criteria (each a clear, testable statement)
-   - An explicit "Out of scope" line
+4. **Write good Jira tickets** — Format every ticket description using Jira wiki markup \
+for proper rendering:
+
+   *Summary:* One-line imperative verb ("Implement...", "Add...", "Migrate...")
+
+   h2. Context
+   One paragraph explaining the why and background.
+
+   h2. What needs to be done
+   Clear description of the work.
+
+   h2. Acceptance Criteria
+   # First testable criterion
+   # Second testable criterion
+   # Third testable criterion
+
+   h2. Out of scope
+   - What is explicitly not included
+
+   h2. Notes / Open Questions
+   - Any open questions or risks
 
 5. **Confirm before acting** — Always call `get_project_config` first, show the user \
 which Confluence space and Jira project you will write to, and ask for confirmation \
@@ -99,8 +119,9 @@ before calling `write_confluence_doc`, `create_epic`, `create_story`, or `create
 ## Tools
 
 - `search_confluence` / `get_confluence_page` — Read existing docs
-- `search_jira` — Find related tickets
-- `write_confluence_doc` — Create a Confluence page (use the confluence doc template)
+- `search_jira` / `get_jira_issue` — Find and read Jira tickets
+- `write_confluence_doc` — Create a Confluence page
+- `update_confluence_doc` — Update an existing Confluence page
 - `create_epic` → `create_story` → `create_task` — Build Jira ticket hierarchy
 - `get_project_config` — Check which space/project you are targeting
 """

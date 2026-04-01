@@ -17,7 +17,6 @@ class ConfluenceConfig(BaseModel):
     space_key: str = ""
     parent_page_id: str = ""
     base_url: str = ""  # Override if Confluence is on a different domain than Jira
-    mermaid_macro: str = "mermaid"  # Macro name for Mermaid diagrams; use "code" if no Mermaid app installed
 
 
 class JiraConfig(BaseModel):

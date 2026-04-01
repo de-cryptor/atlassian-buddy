@@ -18,7 +18,7 @@ def _inline_md(text: str) -> str:
     return text
 
 
-def _md_to_storage(md: str, mermaid_macro: str = "mermaid") -> str:
+def _md_to_storage(md: str) -> str:
     """Convert markdown to Confluence storage format XML."""
     lines = md.split('\n')
     result: list[str] = []
@@ -27,7 +27,7 @@ def _md_to_storage(md: str, mermaid_macro: str = "mermaid") -> str:
     while i < len(lines):
         line = lines[i]
 
-        # Fenced code / mermaid blocks
+        # Fenced code blocks
         fence_match = re.match(r'^```(\w*)', line)
         if fence_match:
             lang = fence_match.group(1)
@@ -39,36 +39,12 @@ def _md_to_storage(md: str, mermaid_macro: str = "mermaid") -> str:
             i += 1  # skip closing ```
             body = '\n'.join(body_lines)
             body_safe = body.replace(']]>', ']]]]><![CDATA[>')
-
-            if lang == 'mermaid':
-                if mermaid_macro == 'mermaid':
-                    # Mermaid app macro — no language parameter needed
-                    result.append(
-                        '<ac:structured-macro ac:name="mermaid">'
-                        f'<ac:plain-text-body><![CDATA[{body_safe}]]></ac:plain-text-body>'
-                        '</ac:structured-macro>'
-                    )
-                else:
-                    # Fallback: render as a code block with language=mermaid
-                    result.append(
-                        f'<ac:structured-macro ac:name="{mermaid_macro}">'
-                        f'<ac:parameter ac:name="language">mermaid</ac:parameter>'
-                        f'<ac:plain-text-body><![CDATA[{body_safe}]]></ac:plain-text-body>'
-                        '</ac:structured-macro>'
-                    )
-            elif lang == 'plantuml':
-                result.append(
-                    '<ac:structured-macro ac:name="plantuml">'
-                    f'<ac:plain-text-body><![CDATA[{body_safe}]]></ac:plain-text-body>'
-                    '</ac:structured-macro>'
-                )
-            else:
-                result.append(
-                    '<ac:structured-macro ac:name="code">'
-                    f'<ac:parameter ac:name="language">{lang}</ac:parameter>'
-                    f'<ac:plain-text-body><![CDATA[{body_safe}]]></ac:plain-text-body>'
-                    '</ac:structured-macro>'
-                )
+            result.append(
+                '<ac:structured-macro ac:name="code">'
+                f'<ac:parameter ac:name="language">{lang}</ac:parameter>'
+                f'<ac:plain-text-body><![CDATA[{body_safe}]]></ac:plain-text-body>'
+                '</ac:structured-macro>'
+            )
             continue
 
         # Headings
@@ -154,7 +130,6 @@ class ConfluenceClient:
         }
         self._default_space = config.confluence.space_key
         self._default_parent = config.confluence.parent_page_id
-        self._mermaid_macro = config.confluence.mermaid_macro
 
     async def get_page(self, page_id: str) -> dict:
         async with httpx.AsyncClient() as client:
@@ -226,7 +201,7 @@ class ConfluenceClient:
             "space": {"key": space},
             "body": {
                 "storage": {
-                    "value": _md_to_storage(body_markdown, self._mermaid_macro),
+                    "value": _md_to_storage(body_markdown),
                     "representation": "storage",
                 }
             },
@@ -263,7 +238,7 @@ class ConfluenceClient:
                 "version": {"number": current_version + 1},
                 "body": {
                     "storage": {
-                        "value": _md_to_storage(body_markdown, self._mermaid_macro),
+                        "value": _md_to_storage(body_markdown),
                         "representation": "storage",
                     }
                 },
