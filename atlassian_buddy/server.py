@@ -176,6 +176,24 @@ def create_server(config: AtlassianBuddyConfig) -> FastMCP:
             return f"Jira API error {e.response.status_code}: {e.response.text[:300]}"
 
     @mcp_server.tool()
+    async def create_subtask(
+        task_key: str,
+        summary: str,
+        description: str,
+        project_key: str = "",
+        label: str = "",
+    ) -> str:
+        """Create a Jira Subtask under an existing Task or Story."""
+        try:
+            key = await jira.create_subtask(
+                task_key, summary, description, label=label, project_key=project_key
+            )
+            url = f"{config.atlassian.base_url}/browse/{key}"
+            return json.dumps({"key": key, "url": url}, indent=2)
+        except httpx.HTTPStatusError as e:
+            return f"Jira API error {e.response.status_code}: {e.response.text[:300]}"
+
+    @mcp_server.tool()
     async def get_project_config() -> str:
         """Return current config values (API token redacted) so Claude can confirm targets before acting."""
         return json.dumps(

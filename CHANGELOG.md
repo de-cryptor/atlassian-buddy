@@ -5,6 +5,12 @@ Bump `version` in `pyproject.toml`, add an entry here, then `git tag vX.Y.Z` to 
 
 ## [Unreleased]
 
+## [0.1.7] — 2026-04-02
+
+### Added
+- `create_subtask` MCP tool — creates a Jira Subtask under an existing Task or Story
+- `jira.subtask_issue_type` config field (default: `Subtask`)
+
 ## [0.1.6] — 2026-04-02
 
 ### Fixed

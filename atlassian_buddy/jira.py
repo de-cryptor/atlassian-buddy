@@ -292,3 +292,31 @@ class JiraClient:
                     )
             resp.raise_for_status()
             return resp.json()["key"]
+
+    async def create_subtask(
+        self,
+        task_key: str,
+        summary: str,
+        description: str,
+        label: str = "",
+        project_key: str = "",
+    ) -> str:
+        project = project_key or self._config.jira.project_key
+        label = label or self._config.jira.default_label
+        fields: dict = {
+            "project": {"key": project},
+            "summary": summary,
+            "issuetype": {"name": self._config.jira.subtask_issue_type},
+            "description": _md_to_adf(description),
+            "labels": [label],
+            "parent": {"key": task_key},
+            **self._config.jira.required_fields,
+        }
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"{self._base_url}/rest/api/3/issue",
+                json={"fields": fields},
+                headers=self._headers,
+            )
+            resp.raise_for_status()
+            return resp.json()["key"]

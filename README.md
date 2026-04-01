@@ -192,10 +192,11 @@ Then talk naturally:
 | `get_confluence_page` | `page_id` | Fetch full page content by ID |
 | `search_jira` | `query`, `project_key?`, `limit?` | JQL full-text search across Jira |
 | `get_jira_issue` | `issue_key_or_url` | Fetch a Jira issue by key (`PLAT-123`) or full URL |
-| `write_confluence_doc` | `title`, `body_markdown`, `space_key?`, `parent_page_id?` | Create a Confluence page (markdown + Mermaid → storage format) |
+| `write_confluence_doc` | `title`, `body_markdown`, `space_key?`, `parent_page_id?` | Create a Confluence page (markdown → storage format) |
 | `create_epic` | `summary`, `description`, `project_key?`, `label?` | Create a Jira Epic |
 | `create_story` | `epic_key`, `summary`, `description`, `acceptance_criteria`, `story_points?`, `project_key?`, `label?` | Create a Jira Story linked to an Epic |
 | `create_task` | `epic_key`, `summary`, `description`, `project_key?`, `label?` | Create a Jira Task linked to an Epic |
+| `create_subtask` | `task_key`, `summary`, `description`, `project_key?`, `label?` | Create a Jira Subtask under an existing Task or Story |
 | `get_project_config` | — | Show current config targets (API token redacted) |
 
 ---
@@ -215,6 +216,7 @@ All fields in `.atlassian_buddy.toml`:
 | `jira.epic_issue_type` | No | Issue type name for epics (default: `Epic`) |
 | `jira.story_issue_type` | No | Issue type name for stories (default: `Story`) |
 | `jira.task_issue_type` | No | Issue type name for tasks (default: `Task`) |
+| `jira.subtask_issue_type` | No | Issue type name for subtasks (default: `Subtask`) |
 | `jira.default_label` | No | Label applied to all created tickets (default: `spike`) |
 | `jira.story_points_field` | No | Custom field ID for story points; varies per instance |
 | `jira.epic_link_field` | No | Custom field ID for epic link; classic projects only |

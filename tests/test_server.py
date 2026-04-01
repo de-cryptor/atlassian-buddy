@@ -41,6 +41,7 @@ def test_all_tools_registered(buddy_config):
         "create_epic",
         "create_story",
         "create_task",
+        "create_subtask",
         "get_project_config",
     ]:
         assert name in tools, f"Tool not registered: {name}"
@@ -295,3 +296,20 @@ async def test_create_task_tool(buddy_config):
     data = json.loads(result)
     assert data["key"] == "PLAT-52"
     assert data["url"] == f"{BASE}/browse/PLAT-52"
+
+# ── create_subtask ──────────────────────────────────────────────────────────────
+
+@respx.mock
+async def test_create_subtask_tool(buddy_config):
+    respx.post(f"{BASE}/rest/api/3/issue").mock(
+        return_value=httpx.Response(200, json={"key": "PLAT-99"})
+    )
+    server = create_server(buddy_config)
+    result = await _get_tool(server, "create_subtask")(
+        task_key="PLAT-10",
+        summary="Write unit tests",
+        description="Cover edge cases for the new handler",
+    )
+    data = json.loads(result)
+    assert data["key"] == "PLAT-99"
+    assert "PLAT-99" in data["url"]

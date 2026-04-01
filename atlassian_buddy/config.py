@@ -24,6 +24,7 @@ class JiraConfig(BaseModel):
     epic_issue_type: str = "Epic"
     story_issue_type: str = "Story"
     task_issue_type: str = "Task"
+    subtask_issue_type: str = "Subtask"
     default_label: str = "spike"
     story_points_field: str = "customfield_10016"
     epic_link_field: str = "customfield_10014"
