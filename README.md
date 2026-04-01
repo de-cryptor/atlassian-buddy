@@ -19,10 +19,17 @@ MCP server that connects Claude to Jira and Confluence. Engineers can research s
 
 ## Installation
 
+Choose your preferred installer:
+
 ```bash
+# pip
 pip install atlassian-buddy
-# or
-uv add atlassian-buddy
+
+# pipx (recommended — isolated environment, auto-manages PATH)
+pipx install atlassian-buddy
+
+# uv
+uv tool install atlassian-buddy
 ```
 
 ---
@@ -107,13 +114,24 @@ atlassian-buddy works with both **Claude Desktop** (GUI app) and **Claude Code**
 | macOS | `~/Library/Application Support/Claude/claude_desktop_config.json` |
 | Windows | `%APPDATA%\Claude\claude_desktop_config.json` |
 
-**Step 2 — Add atlassian-buddy to `mcpServers`**
+**Step 2 — Find your binary path**
 
+Run this in your terminal to get the exact path to use in the config:
+
+```bash
+which atlassian-buddy
+```
+
+**Step 3 — Add atlassian-buddy to `mcpServers`**
+
+Use the block for whichever installer you used. All blocks have the same structure — the only difference is the `command` path.
+
+**pip**
 ```json
 {
   "mcpServers": {
     "atlassian-buddy": {
-      "command": "atlassian-buddy",
+      "command": "/Users/YOU/.local/bin/atlassian-buddy",
       "env": {
         "ATLASSIAN_API_TOKEN": "your-token-here"
       }
@@ -121,14 +139,39 @@ atlassian-buddy works with both **Claude Desktop** (GUI app) and **Claude Code**
   }
 }
 ```
+> macOS path may be `~/Library/Python/3.x/bin/atlassian-buddy`. Run `which atlassian-buddy` to confirm.
 
-> **macOS/Homebrew tip:** If `atlassian-buddy` is not on your PATH, use the full binary path:
-> ```json
-> "command": "/opt/homebrew/bin/atlassian-buddy"
-> ```
-> Run `which atlassian-buddy` in your terminal to find the path.
+**pipx**
+```json
+{
+  "mcpServers": {
+    "atlassian-buddy": {
+      "command": "/Users/YOU/.local/bin/atlassian-buddy",
+      "env": {
+        "ATLASSIAN_API_TOKEN": "your-token-here"
+      }
+    }
+  }
+}
+```
+> Confirm the path with: `pipx environment atlassian-buddy | grep -i bin`
 
-**Step 3 — Restart Claude Desktop**
+**uv**
+```json
+{
+  "mcpServers": {
+    "atlassian-buddy": {
+      "command": "/Users/YOU/.local/bin/atlassian-buddy",
+      "env": {
+        "ATLASSIAN_API_TOKEN": "your-token-here"
+      }
+    }
+  }
+}
+```
+> Confirm the path with: `uv tool dir --bin` — the binary lives in that directory.
+
+**Step 4 — Restart Claude Desktop**
 
 Quit and reopen the app. A hammer icon (🔨) in the toolbar confirms the tools are active.
 
@@ -136,20 +179,35 @@ Quit and reopen the app. A hammer icon (🔨) in the toolbar confirms the tools 
 
 ### Option B — Claude Code (CLI)
 
-**Step 1 — Add atlassian-buddy globally**
-
-Run this once so the server is available in every project:
+**Step 1 — Find your binary path**
 
 ```bash
-claude mcp add atlassian-buddy atlassian-buddy -s user -e ATLASSIAN_API_TOKEN="your-token-here"
+which atlassian-buddy
 ```
 
-> **macOS/Homebrew tip:** Use the full path if `atlassian-buddy` is not on your PATH:
-> ```bash
-> claude mcp add atlassian-buddy /opt/homebrew/bin/atlassian-buddy -s user -e ATLASSIAN_API_TOKEN="your-token-here"
-> ```
+**Step 2 — Add atlassian-buddy globally**
 
-**Step 2 — Verify the connection**
+Run the command for whichever installer you used. Replace the path with the output of `which atlassian-buddy` above.
+
+**pip**
+```bash
+claude mcp add atlassian-buddy ~/.local/bin/atlassian-buddy -s user -e ATLASSIAN_API_TOKEN="your-token-here"
+```
+> macOS path may be `~/Library/Python/3.x/bin/atlassian-buddy`. Use `which atlassian-buddy` to confirm.
+
+**pipx**
+```bash
+claude mcp add atlassian-buddy ~/.local/bin/atlassian-buddy -s user -e ATLASSIAN_API_TOKEN="your-token-here"
+```
+> Confirm the exact path with: `pipx environment atlassian-buddy | grep -i bin`
+
+**uv**
+```bash
+claude mcp add atlassian-buddy ~/.local/bin/atlassian-buddy -s user -e ATLASSIAN_API_TOKEN="your-token-here"
+```
+> Confirm the exact path with: `uv tool dir --bin`
+
+**Step 3 — Verify the connection**
 
 ```bash
 claude mcp list
@@ -158,10 +216,10 @@ claude mcp list
 You should see:
 
 ```
-atlassian-buddy: /opt/homebrew/bin/atlassian-buddy  - ✓ Connected
+atlassian-buddy: /Users/YOU/.local/bin/atlassian-buddy  - ✓ Connected
 ```
 
-**Step 3 — Start a new Claude Code session**
+**Step 4 — Start a new Claude Code session**
 
 MCP servers are loaded at session start. Open a fresh session in any directory and atlassian-buddy tools will be available automatically.
 

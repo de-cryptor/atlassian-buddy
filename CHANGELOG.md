@@ -5,6 +5,12 @@ Bump `version` in `pyproject.toml`, add an entry here, then `git tag vX.Y.Z` to 
 
 ## [Unreleased]
 
+## [0.1.8] — 2026-04-02
+
+### Changed
+- Installation docs now cover pip, pipx (recommended), and `uv tool install`
+- Claude Desktop and Claude Code setup sections each include per-installer config blocks with path-discovery tips (`which`, `pipx environment`, `uv tool dir --bin`)
+
 ## [0.1.7] — 2026-04-02
 
 ### Added
