@@ -5,6 +5,15 @@ Bump `version` in `pyproject.toml`, add an entry here, then `git tag vX.Y.Z` to 
 
 ## [Unreleased]
 
+## [0.1.4] — 2026-04-02
+
+### Fixed
+- Mermaid macro no longer emits a spurious `language` parameter that prevented rendering in Confluence
+
+### Added
+- Markdown table → Confluence `<table>` conversion (previously rendered as raw text)
+- PlantUML fenced block support (`\`\`\`plantuml`) renders via the Confluence PlantUML macro
+
 ## [0.1.3] — 2026-04-02
 
 ### Added

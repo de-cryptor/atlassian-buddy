@@ -41,9 +41,24 @@ def _md_to_storage(md: str, mermaid_macro: str = "mermaid") -> str:
             body_safe = body.replace(']]>', ']]]]><![CDATA[>')
 
             if lang == 'mermaid':
+                if mermaid_macro == 'mermaid':
+                    # Mermaid app macro — no language parameter needed
+                    result.append(
+                        '<ac:structured-macro ac:name="mermaid">'
+                        f'<ac:plain-text-body><![CDATA[{body_safe}]]></ac:plain-text-body>'
+                        '</ac:structured-macro>'
+                    )
+                else:
+                    # Fallback: render as a code block with language=mermaid
+                    result.append(
+                        f'<ac:structured-macro ac:name="{mermaid_macro}">'
+                        f'<ac:parameter ac:name="language">mermaid</ac:parameter>'
+                        f'<ac:plain-text-body><![CDATA[{body_safe}]]></ac:plain-text-body>'
+                        '</ac:structured-macro>'
+                    )
+            elif lang == 'plantuml':
                 result.append(
-                    f'<ac:structured-macro ac:name="{mermaid_macro}">'
-                    f'<ac:parameter ac:name="language">mermaid</ac:parameter>'
+                    '<ac:structured-macro ac:name="plantuml">'
                     f'<ac:plain-text-body><![CDATA[{body_safe}]]></ac:plain-text-body>'
                     '</ac:structured-macro>'
                 )
@@ -82,6 +97,28 @@ def _md_to_storage(md: str, mermaid_macro: str = "mermaid") -> str:
                 items.append(f'<li>{_inline_md(text)}</li>')
                 i += 1
             result.append('<ol>' + ''.join(items) + '</ol>')
+            continue
+
+        # Markdown table — lines starting with |
+        if line.startswith('|'):
+            table_lines: list[str] = []
+            while i < len(lines) and lines[i].startswith('|'):
+                table_lines.append(lines[i])
+                i += 1
+            # Filter out separator rows (only -, |, :, spaces)
+            rows = []
+            for tl in table_lines:
+                if re.match(r'^[\|\-\:\s]+$', tl):
+                    continue
+                cells = [c.strip() for c in tl.strip('|').split('|')]
+                rows.append(cells)
+            if rows:
+                html = '<table><tbody>'
+                html += '<tr>' + ''.join(f'<th><p>{_inline_md(c)}</p></th>' for c in rows[0]) + '</tr>'
+                for row in rows[1:]:
+                    html += '<tr>' + ''.join(f'<td><p>{_inline_md(c)}</p></td>' for c in row) + '</tr>'
+                html += '</tbody></table>'
+                result.append(html)
             continue
 
         # Blank line — skip

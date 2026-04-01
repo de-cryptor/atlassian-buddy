@@ -59,6 +59,8 @@ def test_md_to_storage_mermaid_block():
     assert "graph TD" in result
     assert "<![CDATA[" in result
     assert 'ac:name="code"' not in result
+    # Mermaid macro must NOT have a language parameter — causes rendering failure
+    assert 'ac:name="language"' not in result
 
 
 def test_md_to_storage_mermaid_custom_macro():
@@ -68,6 +70,33 @@ def test_md_to_storage_mermaid_custom_macro():
     assert 'ac:parameter ac:name="language">mermaid' in result
     assert "graph TD" in result
     assert 'ac:name="mermaid"' not in result
+
+
+def test_md_to_storage_plantuml_block():
+    md = "```plantuml\n@startuml\nA -> B : request\n@enduml\n```"
+    result = _md_to_storage(md)
+    assert 'ac:name="plantuml"' in result
+    assert "@startuml" in result
+    assert "<![CDATA[" in result
+    assert 'ac:name="code"' not in result
+
+
+def test_md_to_storage_table():
+    md = "| Name | Age |\n|---|---|\n| Alice | 30 |\n| Bob | 25 |"
+    result = _md_to_storage(md)
+    assert "<table>" in result
+    assert "<th><p>Name</p></th>" in result
+    assert "<th><p>Age</p></th>" in result
+    assert "<td><p>Alice</p></td>" in result
+    assert "<td><p>30</p></td>" in result
+    assert "<td><p>Bob</p></td>" in result
+
+
+def test_md_to_storage_table_no_separator_in_output():
+    md = "| A | B |\n|---|---|\n| 1 | 2 |"
+    result = _md_to_storage(md)
+    # Separator row must not appear as a data row
+    assert result.count("<tr>") == 2  # one header row + one data row
 
 
 def test_md_to_storage_cdata_injection_escaped():
