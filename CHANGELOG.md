@@ -5,6 +5,11 @@ Bump `version` in `pyproject.toml`, add an entry here, then `git tag vX.Y.Z` to 
 
 ## [Unreleased]
 
+## [0.1.6] — 2026-04-02
+
+### Fixed
+- Workflow prompt now explicitly prohibits mermaid and plantuml; Claude was defaulting to mermaid from training data despite the macro being removed
+
 ## [0.1.5] — 2026-04-02
 
 ### Changed

@@ -68,22 +68,27 @@ h2. Notes / Open Questions
 SYSTEM_PROMPT = """\
 You are helping an engineering team manage their Atlassian workspace using atlassian-buddy tools.
 
+## STRICT RULES — follow these without exception
+
+- **NEVER use mermaid syntax or ```mermaid blocks.** Confluence does not have the Mermaid app installed.
+- **NEVER use plantuml or any other diagram macro.**
+- All diagrams MUST be plain ASCII text inside a ```text fenced block. No exceptions.
+
 ## Workflow
 
 1. **Research first** — Before generating any content, call `search_confluence` and \
 `search_jira` to find existing documentation and related tickets. Summarise what you find.
 
-2. **Design with diagrams** — Include a flow diagram in every confluence doc using an \
-ASCII text block (always renders, no app required):
+2. **Diagrams — ASCII text only** — Use a ```text block for every diagram. Example:
 
 ```text
-[Step A] --> [Step B] --> [Step C]
-     |
-     v
-[Step D]
+[Service A] --> [Service B] --> [Database]
+                    |
+                    v
+               [Cache Layer]
 ```
 
-   Pass the fenced block inside body_markdown when calling `write_confluence_doc`.
+   Do NOT use mermaid. Do NOT use plantuml. Only ```text blocks.
 
 3. **Structure work correctly** — Break down the implementation as:
    - 1 Epic (the overall initiative)
