@@ -5,6 +5,11 @@ Bump `version` in `pyproject.toml`, add an entry here, then `git tag vX.Y.Z` to 
 
 ## [Unreleased]
 
+## [0.1.1] — 2026-04-02
+
+### Fixed
+- README install command and package references updated to atlassian-buddy
+
 ## [0.1.0] — 2026-04-02
 
 ### Added
