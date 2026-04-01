@@ -9,8 +9,8 @@ BASE = "https://test.atlassian.net"
 
 
 @pytest.fixture
-def client(spike_config):
-    return ConfluenceClient(spike_config)
+def client(buddy_config):
+    return ConfluenceClient(buddy_config)
 
 
 @respx.mock

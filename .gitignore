@@ -9,6 +9,6 @@ venv/
 .env
 
 # Atlassian project config — contains org-specific values, never commit
-.spike.toml
+.atlassian_buddy.toml
 # But do commit the example:
-!.spike.toml.example
+!.atlassian_buddy.toml.example

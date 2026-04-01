@@ -10,7 +10,7 @@ MCP server that connects Claude to Jira and Confluence. Engineers can research s
 ## Features
 
 - **Research** — search Confluence and Jira before generating anything
-- **Design** — produce Mermaid architecture/flow diagrams as part of every spike doc
+- **Design** — produce Mermaid architecture/flow diagrams as part of every confluence doc
 - **Write** — create or update Confluence pages (markdown + Mermaid → Confluence storage format)
 - **Ticket** — create Jira Epics, Stories with acceptance criteria, and Tasks; supports both next-gen and classic projects
 - **Zero LLM cost** — Claude itself provides all intelligence; no separate AI API key needed
@@ -29,13 +29,13 @@ uv add atlassian-buddy
 
 ## Setup
 
-### Step 1 — Create `~/.spike.toml`
+### Step 1 — Create `~/.atlassian_buddy.toml`
 
-Create `~/.spike.toml` in your home directory with your Atlassian details:
+Create `~/.atlassian_buddy.toml` in your home directory with your Atlassian details:
 
 ```bash
 # macOS / Linux
-touch ~/.spike.toml
+touch ~/.atlassian_buddy.toml
 ```
 
 ```toml
@@ -62,7 +62,7 @@ epic_link_field    = "customfield_10014"
 story_point_scale = [1, 2, 3, 5, 8, 13]
 ```
 
-> **Tip:** Config is also discovered automatically in your project root or any parent directory up to the git root — useful when running atlassian-buddy from a specific repo. The search order is: current directory → git root walk-up → `~/.spike.toml`.
+> **Tip:** Config is also discovered automatically in your project root or any parent directory up to the git root — useful when running atlassian-buddy from a specific repo. The search order is: current directory → git root walk-up → `~/.atlassian_buddy.toml`.
 
 #### Org-specific required fields
 
@@ -88,7 +88,7 @@ Generate an Atlassian API token at https://id.atlassian.com/manage-profile/secur
 export ATLASSIAN_API_TOKEN="your-token-here"
 ```
 
-Never put the token in `.spike.toml` — it is read exclusively from the environment.
+Never put the token in `.atlassian_buddy.toml` — it is read exclusively from the environment.
 
 ---
 
@@ -169,17 +169,17 @@ MCP servers are loaded at session start. Open a fresh session in any directory a
 
 ## Example conversations
 
-Start a spike session by invoking the workflow prompt at the top of your conversation:
+Start a session by invoking the workflow prompt at the top of your conversation:
 
 ```
-/mcp__atlassian-buddy__spike_workflow
+/mcp__atlassian-buddy__buddy_workflow
 ```
 
 Then talk naturally:
 
 - "I need to spike on replacing our job queue with Temporal. Research what we have, design a solution with a diagram, write a spike doc in Confluence under the Platform space, then create an epic and stories in the PLAT project."
 - "Search Confluence for our auth service architecture and summarise what you find."
-- "Break down the spike doc you just wrote into Jira tickets — 1 epic, stories with acceptance criteria, fibonacci points."
+- "Break down the confluence doc you just wrote into Jira tickets — 1 epic, stories with acceptance criteria, fibonacci points."
 - "What Jira tickets are open in PLAT related to observability?"
 
 ---
@@ -191,7 +191,7 @@ Then talk naturally:
 | `search_confluence` | `query`, `space_key?`, `limit?` | CQL full-text search across Confluence |
 | `get_confluence_page` | `page_id` | Fetch full page content by ID |
 | `search_jira` | `query`, `project_key?`, `limit?` | JQL full-text search across Jira |
-| `write_spike_doc` | `title`, `body_markdown`, `space_key?`, `parent_page_id?` | Create a Confluence page (markdown + Mermaid → storage format) |
+| `write_confluence_doc` | `title`, `body_markdown`, `space_key?`, `parent_page_id?` | Create a Confluence page (markdown + Mermaid → storage format) |
 | `create_epic` | `summary`, `description`, `project_key?`, `label?` | Create a Jira Epic |
 | `create_story` | `epic_key`, `summary`, `description`, `acceptance_criteria`, `story_points?`, `project_key?`, `label?` | Create a Jira Story linked to an Epic |
 | `create_task` | `epic_key`, `summary`, `description`, `project_key?`, `label?` | Create a Jira Task linked to an Epic |
@@ -201,14 +201,14 @@ Then talk naturally:
 
 ## Configuration reference
 
-All fields in `.spike.toml`:
+All fields in `.atlassian_buddy.toml`:
 
 | Field | Required | Description |
 |---|---|---|
 | `atlassian.base_url` | Yes | Your Atlassian Cloud domain, e.g. `https://myorg.atlassian.net` |
 | `atlassian.email` | Yes | Your Atlassian account email |
 | `confluence.base_url` | No | Override if Confluence is on a different domain than Jira |
-| `confluence.space_key` | No | Confluence space key for new spike docs, e.g. `ENG` |
+| `confluence.space_key` | No | Confluence space key for new confluence docs, e.g. `ENG` |
 | `confluence.parent_page_id` | No | Page ID to nest new docs under |
 | `jira.project_key` | No | Jira project key, e.g. `PLAT` |
 | `jira.epic_issue_type` | No | Issue type name for epics (default: `Epic`) |

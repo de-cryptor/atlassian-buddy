@@ -6,7 +6,7 @@ from typing import Optional
 
 import httpx
 
-from atlassian_buddy.config import SpikeConfig
+from atlassian_buddy.config import AtlassianBuddyConfig
 
 
 def _inline_md(text: str) -> str:
@@ -104,7 +104,7 @@ def _strip_html(html: str) -> str:
 
 
 class ConfluenceClient:
-    def __init__(self, config: SpikeConfig) -> None:
+    def __init__(self, config: AtlassianBuddyConfig) -> None:
         confluence_url = config.confluence.base_url or config.atlassian.base_url
         self._base_url = confluence_url.rstrip('/')
         credentials = base64.b64encode(

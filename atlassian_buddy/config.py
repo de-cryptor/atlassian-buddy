@@ -35,7 +35,7 @@ class TicketsConfig(BaseModel):
     story_point_scale: list[int] = [1, 2, 3, 5, 8, 13]
 
 
-class SpikeConfig(BaseModel):
+class AtlassianBuddyConfig(BaseModel):
     atlassian: AtlassianConfig
     confluence: ConfluenceConfig = ConfluenceConfig()
     jira: JiraConfig = JiraConfig()
@@ -52,24 +52,24 @@ def _find_toml(explicit_path: Optional[str] = None) -> Path:
 
     current = Path.cwd()
     while True:
-        candidate = current / ".spike.toml"
+        candidate = current / ".atlassian_buddy.toml"
         if candidate.exists():
             return candidate
         if (current / ".git").exists() or current.parent == current:
             break
         current = current.parent
 
-    home_config = Path.home() / ".spike.toml"
+    home_config = Path.home() / ".atlassian_buddy.toml"
     if home_config.exists():
         return home_config
 
     raise FileNotFoundError(
-        "No .spike.toml found. Create one in your project root or at ~/.spike.toml.\n"
-        "Run: cp .spike.toml.example .spike.toml  (then edit with your values)"
+        "No .atlassian_buddy.toml found. Create one in your project root or at ~/.atlassian_buddy.toml.\n"
+        "Run: cp .atlassian_buddy.toml.example .atlassian_buddy.toml  (then edit with your values)"
     )
 
 
-def load_config(explicit_path: Optional[str] = None) -> SpikeConfig:
+def load_config(explicit_path: Optional[str] = None) -> AtlassianBuddyConfig:
     api_token = os.environ.get("ATLASSIAN_API_TOKEN", "")
     if not api_token:
         raise SystemExit(
@@ -84,11 +84,11 @@ def load_config(explicit_path: Optional[str] = None) -> SpikeConfig:
 
     if "api_token" in data.get("atlassian", {}):
         raise SystemExit(
-            "Do not put api_token in .spike.toml — use the ATLASSIAN_API_TOKEN "
+            "Do not put api_token in .atlassian_buddy.toml — use the ATLASSIAN_API_TOKEN "
             "environment variable instead."
         )
 
-    return SpikeConfig(
+    return AtlassianBuddyConfig(
         atlassian=AtlassianConfig(**data["atlassian"]),
         confluence=ConfluenceConfig(**data.get("confluence", {})),
         jira=JiraConfig(**data.get("jira", {})),

@@ -1,5 +1,5 @@
-# spike-mcp configuration
-# Copy this file: cp .spike.toml.example .spike.toml
+# atlassian-buddy configuration
+# Copy this file: cp .atlassian_buddy.toml.example .atlassian_buddy.toml
 # Edit with your actual values.
 # NEVER put your API token here — use ATLASSIAN_API_TOKEN env var instead.
 

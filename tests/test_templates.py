@@ -1,7 +1,7 @@
-from atlassian_buddy.templates import SPIKE_DOC_TEMPLATE, STORY_TEMPLATE, SYSTEM_PROMPT
+from atlassian_buddy.templates import CONFLUENCE_DOC_TEMPLATE, STORY_TEMPLATE, SYSTEM_PROMPT
 
 
-def test_spike_doc_has_required_sections():
+def test_confluence_doc_has_required_sections():
     for section in [
         "Overview",
         "Problem Statement",
@@ -14,11 +14,11 @@ def test_spike_doc_has_required_sections():
         "Story",
         "References",
     ]:
-        assert section in SPIKE_DOC_TEMPLATE, f"Missing section: {section}"
+        assert section in CONFLUENCE_DOC_TEMPLATE, f"Missing section: {section}"
 
 
-def test_spike_doc_has_mermaid_placeholder():
-    assert "```mermaid" in SPIKE_DOC_TEMPLATE
+def test_confluence_doc_has_mermaid_placeholder():
+    assert "```mermaid" in CONFLUENCE_DOC_TEMPLATE
 
 
 def test_story_template_is_formattable():

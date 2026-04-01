@@ -24,19 +24,19 @@ def _get_prompt_fn(server, name: str):
 
 # ── basic registration ─────────────────────────────────────────────────────────
 
-def test_create_server_returns_fastmcp(spike_config):
+def test_create_server_returns_fastmcp(buddy_config):
     from mcp.server.fastmcp import FastMCP
-    assert isinstance(create_server(spike_config), FastMCP)
+    assert isinstance(create_server(buddy_config), FastMCP)
 
 
-def test_all_tools_registered(spike_config):
-    server = create_server(spike_config)
+def test_all_tools_registered(buddy_config):
+    server = create_server(buddy_config)
     tools = server._tool_manager._tools
     for name in [
         "search_confluence",
         "get_confluence_page",
         "search_jira",
-        "write_spike_doc",
+        "write_confluence_doc",
         "create_epic",
         "create_story",
         "create_task",
@@ -45,14 +45,14 @@ def test_all_tools_registered(spike_config):
         assert name in tools, f"Tool not registered: {name}"
 
 
-def test_spike_workflow_prompt_registered(spike_config):
-    server = create_server(spike_config)
-    assert "spike_workflow" in server._prompt_manager._prompts
+def test_buddy_workflow_prompt_registered(buddy_config):
+    server = create_server(buddy_config)
+    assert "buddy_workflow" in server._prompt_manager._prompts
 
 
-def test_spike_workflow_prompt_returns_system_prompt(spike_config):
-    server = create_server(spike_config)
-    fn = _get_prompt_fn(server, "spike_workflow")
+def test_buddy_workflow_prompt_returns_system_prompt(buddy_config):
+    server = create_server(buddy_config)
+    fn = _get_prompt_fn(server, "buddy_workflow")
     result = fn()
     assert isinstance(result, list)
     assert len(result) == 1
@@ -65,8 +65,8 @@ def test_spike_workflow_prompt_returns_system_prompt(spike_config):
 
 # ── get_project_config ─────────────────────────────────────────────────────────
 
-async def test_get_project_config_redacts_token(spike_config):
-    server = create_server(spike_config)
+async def test_get_project_config_redacts_token(buddy_config):
+    server = create_server(buddy_config)
     result = await _get_tool(server, "get_project_config")()
     data = json.loads(result)
     assert data["atlassian"]["api_token"] == "***REDACTED***"
@@ -80,7 +80,7 @@ async def test_get_project_config_redacts_token(spike_config):
 # ── search_confluence ──────────────────────────────────────────────────────────
 
 @respx.mock
-async def test_search_confluence_returns_results(spike_config):
+async def test_search_confluence_returns_results(buddy_config):
     respx.get(f"{BASE}/wiki/rest/api/content/search").mock(
         return_value=httpx.Response(200, json={
             "results": [{
@@ -91,18 +91,18 @@ async def test_search_confluence_returns_results(spike_config):
             }]
         })
     )
-    server = create_server(spike_config)
+    server = create_server(buddy_config)
     result = await _get_tool(server, "search_confluence")(query="auth")
     data = json.loads(result)
     assert data[0]["title"] == "Auth Docs"
 
 
 @respx.mock
-async def test_search_confluence_http_error_returns_string(spike_config):
+async def test_search_confluence_http_error_returns_string(buddy_config):
     respx.get(f"{BASE}/wiki/rest/api/content/search").mock(
         return_value=httpx.Response(403, text="Forbidden")
     )
-    server = create_server(spike_config)
+    server = create_server(buddy_config)
     result = await _get_tool(server, "search_confluence")(query="auth")
     assert "403" in result
     assert "error" in result.lower()
@@ -111,7 +111,7 @@ async def test_search_confluence_http_error_returns_string(spike_config):
 # ── search_jira ────────────────────────────────────────────────────────────────
 
 @respx.mock
-async def test_search_jira_returns_results(spike_config):
+async def test_search_jira_returns_results(buddy_config):
     respx.get(f"{BASE}/rest/api/3/issue/search").mock(
         return_value=httpx.Response(200, json={
             "issues": [{
@@ -124,24 +124,24 @@ async def test_search_jira_returns_results(spike_config):
             }]
         })
     )
-    server = create_server(spike_config)
+    server = create_server(buddy_config)
     result = await _get_tool(server, "search_jira")(query="queue")
     data = json.loads(result)
     assert data[0]["key"] == "PLAT-1"
 
 
-# ── write_spike_doc ────────────────────────────────────────────────────────────
+# ── write_confluence_doc ────────────────────────────────────────────────────────────
 
 @respx.mock
-async def test_write_spike_doc(spike_config):
+async def test_write_confluence_doc(buddy_config):
     respx.post(f"{BASE}/wiki/rest/api/content").mock(
         return_value=httpx.Response(200, json={
             "id": "777",
             "_links": {"webui": "/spaces/ENG/pages/777"},
         })
     )
-    server = create_server(spike_config)
-    result = await _get_tool(server, "write_spike_doc")(
+    server = create_server(buddy_config)
+    result = await _get_tool(server, "write_confluence_doc")(
         title="My Spike",
         body_markdown="# Title\n\nContent",
     )
@@ -150,10 +150,10 @@ async def test_write_spike_doc(spike_config):
     assert "url" in data
 
 
-# ── update_spike_doc ───────────────────────────────────────────────────────────
+# ── update_confluence_doc ───────────────────────────────────────────────────────────
 
 @respx.mock
-async def test_update_spike_doc(spike_config):
+async def test_update_confluence_doc(buddy_config):
     respx.get(f"{BASE}/wiki/rest/api/content/777").mock(
         return_value=httpx.Response(200, json={
             "id": "777",
@@ -167,8 +167,8 @@ async def test_update_spike_doc(spike_config):
             "_links": {"webui": "/spaces/ENG/pages/777"},
         })
     )
-    server = create_server(spike_config)
-    result = await _get_tool(server, "update_spike_doc")(
+    server = create_server(buddy_config)
+    result = await _get_tool(server, "update_confluence_doc")(
         page_id="777",
         title="Updated Title",
         body_markdown="# Updated\n\nNew content",
@@ -181,11 +181,11 @@ async def test_update_spike_doc(spike_config):
 # ── create_epic ────────────────────────────────────────────────────────────────
 
 @respx.mock
-async def test_create_epic_tool(spike_config):
+async def test_create_epic_tool(buddy_config):
     respx.post(f"{BASE}/rest/api/3/issue").mock(
         return_value=httpx.Response(201, json={"key": "PLAT-50"})
     )
-    server = create_server(spike_config)
+    server = create_server(buddy_config)
     result = await _get_tool(server, "create_epic")(
         summary="Big epic", description="Context here"
     )
@@ -197,11 +197,11 @@ async def test_create_epic_tool(spike_config):
 # ── create_story ───────────────────────────────────────────────────────────────
 
 @respx.mock
-async def test_create_story_tool(spike_config):
+async def test_create_story_tool(buddy_config):
     respx.post(f"{BASE}/rest/api/3/issue").mock(
         return_value=httpx.Response(201, json={"key": "PLAT-51"})
     )
-    server = create_server(spike_config)
+    server = create_server(buddy_config)
     result = await _get_tool(server, "create_story")(
         epic_key="PLAT-50",
         summary="Add worker",
@@ -217,11 +217,11 @@ async def test_create_story_tool(spike_config):
 # ── create_task ────────────────────────────────────────────────────────────────
 
 @respx.mock
-async def test_create_task_tool(spike_config):
+async def test_create_task_tool(buddy_config):
     respx.post(f"{BASE}/rest/api/3/issue").mock(
         return_value=httpx.Response(201, json={"key": "PLAT-52"})
     )
-    server = create_server(spike_config)
+    server = create_server(buddy_config)
     result = await _get_tool(server, "create_task")(
         epic_key="PLAT-50",
         summary="Set up namespace",

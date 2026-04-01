@@ -9,8 +9,8 @@ BASE = "https://test.atlassian.net"
 
 
 @pytest.fixture
-def client(spike_config):
-    return JiraClient(spike_config)
+def client(buddy_config):
+    return JiraClient(buddy_config)
 
 
 @respx.mock

@@ -1,7 +1,7 @@
-SPIKE_DOC_TEMPLATE = """\
+CONFLUENCE_DOC_TEMPLATE = """\
 ## Overview
 
-<!-- One paragraph describing what this spike is investigating -->
+<!-- One paragraph describing what this document is about -->
 
 ## Problem Statement
 
@@ -75,8 +75,8 @@ You are helping an engineering team run a technical spike using the atlassian-bu
 1. **Research first** — Before generating any content, call `search_confluence` and \
 `search_jira` to find existing documentation and related tickets. Summarise what you find.
 
-2. **Design with diagrams** — Every spike doc must include a Mermaid architecture or \
-flow diagram. Use ```mermaid fenced blocks in the body_markdown you pass to `write_spike_doc`.
+2. **Design with diagrams** — Every confluence doc must include a Mermaid architecture or \
+flow diagram. Use ```mermaid fenced blocks in the body_markdown you pass to `write_confluence_doc`.
 
 3. **Structure work correctly** — Break down the implementation as:
    - 1 Epic (the overall initiative)
@@ -91,13 +91,13 @@ flow diagram. Use ```mermaid fenced blocks in the body_markdown you pass to `wri
 
 5. **Confirm before acting** — Always call `get_project_config` first, show the user \
 which Confluence space and Jira project you will write to, and ask for confirmation \
-before calling `write_spike_doc`, `create_epic`, `create_story`, or `create_task`.
+before calling `write_confluence_doc`, `create_epic`, `create_story`, or `create_task`.
 
 ## Tools
 
 - `search_confluence` / `get_confluence_page` — Read existing docs
 - `search_jira` — Find related tickets
-- `write_spike_doc` — Create a Confluence page (use the spike doc template)
+- `write_confluence_doc` — Create a Confluence page (use the confluence doc template)
 - `create_epic` → `create_story` → `create_task` — Build Jira ticket hierarchy
 - `get_project_config` — Check which space/project you are targeting
 """

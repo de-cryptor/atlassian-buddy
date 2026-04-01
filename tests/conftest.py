@@ -3,14 +3,14 @@ from atlassian_buddy.config import (
     AtlassianConfig,
     ConfluenceConfig,
     JiraConfig,
-    SpikeConfig,
+    AtlassianBuddyConfig,
     TicketsConfig,
 )
 
 
 @pytest.fixture
-def spike_config() -> SpikeConfig:
-    return SpikeConfig(
+def buddy_config() -> AtlassianBuddyConfig:
+    return AtlassianBuddyConfig(
         atlassian=AtlassianConfig(
             base_url="https://test.atlassian.net",
             email="test@example.com",

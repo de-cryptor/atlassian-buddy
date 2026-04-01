@@ -6,7 +6,7 @@ from typing import Optional
 
 import httpx
 
-from atlassian_buddy.config import SpikeConfig
+from atlassian_buddy.config import AtlassianBuddyConfig
 
 
 def _inline_adf(text: str) -> list[dict]:
@@ -132,7 +132,7 @@ def _md_to_adf(md: str) -> dict:
 
 
 class JiraClient:
-    def __init__(self, config: SpikeConfig) -> None:
+    def __init__(self, config: AtlassianBuddyConfig) -> None:
         self._base_url = config.atlassian.base_url.rstrip('/')
         credentials = base64.b64encode(
             f"{config.atlassian.email}:{config.api_token}".encode()

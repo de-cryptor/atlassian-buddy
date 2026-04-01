@@ -1,0 +1,22 @@
+[atlassian]
+base_url = "https://inspectorio.atlassian.net"
+email    = "jatin@inspectorio.com"
+
+[confluence]
+base_url       = "https://inspectoriodocs.atlassian.net"
+space_key      = ""
+parent_page_id = ""
+
+[jira]
+project_key        = "PLAT"
+epic_issue_type    = "Epic"
+story_issue_type   = "Story"
+task_issue_type    = "Task"
+default_label      = "spike"
+story_points_field = "customfield_10016"
+epic_link_field    = "customfield_10014"
+
+[jira.required_fields]
+customfield_11139 = 15
+customfield_11518 = { id = "12203" }
+customfield_11664 = [{ id = "13089" }]

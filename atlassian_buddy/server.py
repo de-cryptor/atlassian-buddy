@@ -6,13 +6,13 @@ import httpx
 from mcp.server.fastmcp import FastMCP
 from mcp.types import PromptMessage, TextContent
 
-from atlassian_buddy.config import SpikeConfig, load_config
+from atlassian_buddy.config import AtlassianBuddyConfig, load_config
 from atlassian_buddy.confluence import ConfluenceClient
 from atlassian_buddy.jira import JiraClient
 from atlassian_buddy.templates import SYSTEM_PROMPT
 
 
-def create_server(config: SpikeConfig) -> FastMCP:
+def create_server(config: AtlassianBuddyConfig) -> FastMCP:
     mcp_server = FastMCP("atlassian-buddy")
     confluence = ConfluenceClient(config)
     jira = JiraClient(config)
@@ -49,13 +49,13 @@ def create_server(config: SpikeConfig) -> FastMCP:
             return f"Jira API error {e.response.status_code}: {e.response.text[:300]}"
 
     @mcp_server.tool()
-    async def write_spike_doc(
+    async def write_confluence_doc(
         title: str,
         body_markdown: str,
         space_key: str = "",
         parent_page_id: str = "",
     ) -> str:
-        """Create a Confluence page for a spike doc. Converts markdown (including Mermaid diagrams) to Confluence storage format."""
+        """Create a Confluence page for a confluence doc. Converts markdown (including Mermaid diagrams) to Confluence storage format."""
         try:
             result = await confluence.create_page(
                 title, body_markdown, space_key=space_key, parent_id=parent_page_id
@@ -65,7 +65,7 @@ def create_server(config: SpikeConfig) -> FastMCP:
             return f"Confluence API error {e.response.status_code}: {e.response.text[:300]}"
 
     @mcp_server.tool()
-    async def update_spike_doc(
+    async def update_confluence_doc(
         page_id: str,
         title: str,
         body_markdown: str,
@@ -167,8 +167,8 @@ def create_server(config: SpikeConfig) -> FastMCP:
         )
 
     @mcp_server.prompt()
-    def spike_workflow() -> list[PromptMessage]:
-        """Workflow instructions for running a spike with Claude. Invoke at the start of a spike session."""
+    def buddy_workflow() -> list[PromptMessage]:
+        """Workflow instructions for running a technical research session using atlassian-buddy. Invoke at the start of a buddy session."""
         return [PromptMessage(role="user", content=TextContent(type="text", text=SYSTEM_PROMPT))]
 
     return mcp_server
