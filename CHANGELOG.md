@@ -5,6 +5,14 @@ Bump `version` in `pyproject.toml`, add an entry here, then `git tag vX.Y.Z` to 
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-04-02
+
+### Changed
+- Renamed config file from `.spike.toml` to `.atlassian_buddy.toml`
+- Renamed MCP tools: `write_spike_doc` → `write_confluence_doc`, `update_spike_doc` → `update_confluence_doc`
+- Renamed MCP prompt: `spike_workflow` → `buddy_workflow`
+- Removed all spike-mcp branding from package internals
+
 ## [0.1.1] — 2026-04-02
 
 ### Fixed
